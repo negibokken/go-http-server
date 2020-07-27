@@ -3,6 +3,7 @@ package httpserver
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"net"
 )
 
@@ -12,15 +13,20 @@ type HTTPServer interface {
 
 type HTTPServerListenError error
 
+func lex(scan bufio.Scanner) {
+}
+
 func handleConnection(conn net.Conn) {
 	scanner := bufio.NewScanner(conn)
+	scanner.Split(bufio.ScanRunes)
 	for scanner.Scan() {
-		fmt.Printf("%v\n", scanner.Text())
-		err := conn.Close()
-		if err != nil {
-			fmt.Println("connection close error %v", err)
+		fmt.Printf("%s\n", scanner.Text())
+		if scanner.Err() != nil {
+			log.Fatal("non-EOF error")
 		}
+		fmt.Printf("%s\n", len(scanner.Text()))
 	}
+	fmt.Print("end conn")
 }
 
 // NewServer は tcp server を返す
