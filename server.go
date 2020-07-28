@@ -18,13 +18,12 @@ func lex(scan bufio.Scanner) {
 
 func handleConnection(conn net.Conn) {
 	scanner := bufio.NewScanner(conn)
-	scanner.Split(bufio.ScanRunes)
+	// scanner.Split(bufio.ScanRunes)
 	for scanner.Scan() {
-		fmt.Printf("%s\n", scanner.Text())
+		fmt.Printf("%v\n", scanner.Bytes())
 		if scanner.Err() != nil {
 			log.Fatal("non-EOF error")
 		}
-		fmt.Printf("%s\n", len(scanner.Text()))
 	}
 	fmt.Print("end conn")
 }
