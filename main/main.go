@@ -12,4 +12,5 @@ func main() {
 		log.Fatal("server creation error")
 
 	}
+	log.Println("Now listening 8080")
 }
