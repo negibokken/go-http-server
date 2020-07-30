@@ -3,7 +3,6 @@ package httpserver
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"net"
 )
 
@@ -13,17 +12,31 @@ type HTTPServer interface {
 
 type HTTPServerListenError error
 
-func lex(scan bufio.Scanner) {
+type Tokenizer struct {
+	scanner *bufio.Scanner
+}
+
+// Response = Status-Line      ; Section 6.1
+// 					*(( general-header ; Section 4.5
+// 					| response-header  ; Section 6.2
+// 					| entity-header ) CRLF) ; Section 7.1
+// 					CRLF
+// 					[ message-body ] ; Section 7.2
+// Status-Line
+// Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
+
+func (t Tokenizer) nextChar() string {
+	t.scanner.Scan()
+	return t.scanner.Text()
 }
 
 func handleConnection(conn net.Conn) {
 	scanner := bufio.NewScanner(conn)
-	// scanner.Split(bufio.ScanRunes)
-	for scanner.Scan() {
-		fmt.Printf("%v\n", scanner.Bytes())
-		if scanner.Err() != nil {
-			log.Fatal("non-EOF error")
-		}
+	scanner.Split(bufio.ScanRunes)
+	tokenizer := &Tokenizer{scanner}
+	for {
+		c := tokenizer.nextChar()
+		fmt.Printf("%s\n", c)
 	}
 	fmt.Print("end conn")
 }
